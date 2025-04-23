@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-BUILD_TYPE=$1
+PRESET_NAME=$1
 
 # Configure CMake
-cmake -S . -B cmake-build-"$BUILD_TYPE" \
-  --preset "$BUILD_TYPE" -G Ninja \
-  -DTREAT_WARNINGS_AS_ERRORS=ON
+cmake -S . \
+  --preset "${PRESET_NAME}" -G Ninja \
+  -D CT_TREAT_WARNINGS_AS_ERRORS=ON
 
 # Build
-cmake --build cmake-build-"$BUILD_TYPE" -j
+cmake --build "build/${PRESET_NAME}" -j
