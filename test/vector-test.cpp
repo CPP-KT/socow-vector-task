@@ -5,19 +5,21 @@
 
 #include <utility>
 
-TEST_CASE("Default constructor") {
-  element::no_new_intances_guard ig;
+namespace ct::test {
 
-  socow_vector<element, 3> a;
+TEST_CASE("Default constructor") {
+  Element::NoNewInstancesGuard ig;
+
+  SocowVector<Element, 3> a;
   assert_empty_storage(a);
   REQUIRE(ig.check_no_new_instances());
 }
 
 TEST_CASE("Push back") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
 
   for (std::size_t i = 0; i < N; ++i) {
     a.push_back(2 * i + 1);
@@ -33,13 +35,13 @@ TEST_CASE("Push back") {
 }
 
 TEST_CASE("Push back xvalue") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
 
   for (std::size_t i = 0; i < N; ++i) {
-    element x = 2 * i + 1;
+    Element x = 2 * i + 1;
     a.push_back(std::move(x));
     REQUIRE(x == -1);
   }
@@ -54,10 +56,10 @@ TEST_CASE("Push back xvalue") {
 }
 
 TEST_CASE("Push back from self") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
 
   a.push_back(42);
   for (std::size_t i = 1; i < N; ++i) {
@@ -74,11 +76,11 @@ TEST_CASE("Push back from self") {
 }
 
 TEST_CASE("Subscript") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50, K = 10;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
   for (std::size_t i = 0; i < K; ++i) {
@@ -108,15 +110,15 @@ TEST_CASE("Subscript") {
 }
 
 TEST_CASE("Access data") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
   SECTION("non-const") {
-    element* data = a.data();
+    Element* data = a.data();
     REQUIRE(data == &a[0]);
 
     for (std::size_t i = 0; i < N; ++i) {
@@ -125,7 +127,7 @@ TEST_CASE("Access data") {
     }
   }
   SECTION("const") {
-    const element* cdata = std::as_const(a).data();
+    const Element* cdata = std::as_const(a).data();
     REQUIRE(cdata == &std::as_const(a)[0]);
 
     for (std::size_t i = 0; i < N; ++i) {
@@ -136,11 +138,11 @@ TEST_CASE("Access data") {
 }
 
 TEST_CASE("Access front/back element") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
   SECTION("non-const") {
@@ -152,7 +154,7 @@ TEST_CASE("Access front/back element") {
   }
 
   SECTION("const") {
-    const socow_vector<element, 3>& ca = a;
+    const SocowVector<Element, 3>& ca = a;
 
     REQUIRE(ca.front() == 1);
     REQUIRE(&ca.front() == &ca[0]);
@@ -163,15 +165,15 @@ TEST_CASE("Access front/back element") {
 }
 
 TEST_CASE("Reserve capacity") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 10, M = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
   a.reserve(M);
-  snapshot s(a);
+  Snapshot s(a);
 
   for (std::size_t i = N; i < M; ++i) {
     a.push_back(2 * i + 1);
@@ -183,18 +185,18 @@ TEST_CASE("Reserve capacity") {
 }
 
 TEST_CASE("Shrink capacity") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50, M = 10;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   a.reserve(N);
   mass_push_back(a, M);
 
   REQUIRE(a.size() == M);
   REQUIRE(a.capacity() == N);
 
-  snapshot s(a);
+  Snapshot s(a);
 
   a.shrink_to_fit();
 
@@ -203,15 +205,15 @@ TEST_CASE("Shrink capacity") {
 }
 
 TEST_CASE("Clear") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
   {
-    snapshot s(a);
+    Snapshot s(a);
 
     a.clear();
 
@@ -225,34 +227,34 @@ TEST_CASE("Clear") {
 }
 
 TEST_CASE("Swap") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 4, M = 7;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   for (std::size_t i = 1; i <= N; ++i) {
     a.push_back(i);
   }
 
-  socow_vector<element, 3> b;
+  SocowVector<Element, 3> b;
   for (std::size_t i = N; i <= N + M; ++i) {
     b.push_back(i);
   }
 
-  snapshot s(a, b);
+  Snapshot s(a, b);
   a.swap(b);
   s.full_verify(b, a);
 }
 
 TEST_CASE("Copy constructor") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
-  socow_vector<element, 3> b = a;
+  SocowVector<Element, 3> b = a;
   REQUIRE(b.size() == a.size());
 
   for (std::size_t i = 0; i < N; ++i) {
@@ -262,15 +264,15 @@ TEST_CASE("Copy constructor") {
 }
 
 TEST_CASE("Copy assignment") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50, K = 10;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
-  snapshot s(a);
+  Snapshot s(a);
 
-  socow_vector<element, 3> b;
+  SocowVector<Element, 3> b;
   mass_push_back(b, K);
 
   a = a;
@@ -281,33 +283,33 @@ TEST_CASE("Copy assignment") {
 }
 
 TEST_CASE("Move constructor") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
-  snapshot s(a);
+  Snapshot s(a);
 
-  socow_vector<element, 3> b = std::move(a);
+  SocowVector<Element, 3> b = std::move(a);
 
   s.full_verify(b);
   assert_empty_storage(a);
 }
 
 TEST_CASE("Move assignment") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
-  snapshot s(a);
+  Snapshot s(a);
 
   static constexpr std::size_t K = 50;
 
-  socow_vector<element, 3> b;
+  SocowVector<Element, 3> b;
   mass_push_back(b, K);
 
   a = std::move(a);
@@ -317,15 +319,15 @@ TEST_CASE("Move assignment") {
 }
 
 TEST_CASE("Pop back") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
 
   {
-    snapshot s(a);
+    Snapshot s(a);
 
     for (std::size_t i = N; i > 0; --i) {
       CAPTURE(i);
@@ -344,16 +346,16 @@ TEST_CASE("Pop back") {
 }
 
 TEST_CASE("Insert") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50, K = 10;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   for (std::size_t i = 0; i < N; ++i) {
     a.push_back(2 * i + 1);
   }
 
-  socow_vector<element, 3>::const_iterator it = a.insert(a.begin() + K, 42);
+  SocowVector<Element, 3>::ConstIterator it = a.insert(a.begin() + K, 42);
 
   REQUIRE(it == a.begin() + K);
   REQUIRE(*it == 42);
@@ -375,13 +377,13 @@ TEST_CASE("Insert") {
 }
 
 TEST_CASE("Erase single") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50, POS = 10;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
-  snapshot s(a);
+  Snapshot s(a);
 
   auto it = a.erase(a.begin() + POS);
   REQUIRE(it == a.begin() + POS);
@@ -400,13 +402,13 @@ TEST_CASE("Erase single") {
 }
 
 TEST_CASE("Erase range") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50, K = 10;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
-  snapshot s(a);
+  Snapshot s(a);
 
   auto it = a.erase(a.begin() + K, a.end() - K);
   REQUIRE(it == a.begin() + K);
@@ -425,23 +427,23 @@ TEST_CASE("Erase range") {
 }
 
 TEST_CASE("Range-based for") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   for (std::size_t i = 0; i < N; ++i) {
     a.push_back(42);
   }
 
   std::size_t i = 0;
-  for (element& e : a) {
+  for (Element& e : a) {
     e = i * 2 + 1;
     ++i;
   }
 
   i = 0;
-  for (const element& e : a) {
+  for (const Element& e : a) {
     CAPTURE(i);
     REQUIRE(e == i * 2 + 1);
     ++i;
@@ -449,9 +451,9 @@ TEST_CASE("Range-based for") {
 }
 
 TEST_CASE("Small Object Optimization") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
 
   a.push_back(42);
   a.push_back(43);
@@ -463,16 +465,16 @@ TEST_CASE("Small Object Optimization") {
 }
 
 TEST_CASE("Copy-on-write") {
-  element::no_new_intances_guard ig;
+  Element::NoNewInstancesGuard ig;
 
   static constexpr std::size_t N = 50;
 
-  socow_vector<element, 3> a;
+  SocowVector<Element, 3> a;
   mass_push_back(a, N);
-  snapshot s(a);
+  Snapshot s(a);
 
-  socow_vector<element, 3> b = a;
-  socow_vector<element, 3> c = a;
+  SocowVector<Element, 3> b = a;
+  SocowVector<Element, 3> c = a;
 
   s.full_verify(b);
   s.full_verify(c);
@@ -483,3 +485,5 @@ TEST_CASE("Copy-on-write") {
   REQUIRE(std::as_const(b[0]) == 42);
   REQUIRE(std::as_const(c[0]) == 1);
 }
+
+} // namespace ct::test

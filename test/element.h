@@ -3,22 +3,24 @@
 #include <ostream>
 #include <set>
 
-struct element {
-  struct no_new_intances_guard;
+namespace ct::test {
 
-  element() = delete;
-  element(int data);
-  element(const element& other);
-  element(element&& other) noexcept;
-  ~element();
+struct Element {
+  struct NoNewInstancesGuard;
 
-  element& operator=(const element& other);
-  element& operator=(element&& other) noexcept;
+  Element() = delete;
+  Element(int data);
+  Element(const Element& other);
+  Element(Element&& other) noexcept;
+  ~Element();
 
-  friend bool operator==(const element& lhs, const element& rhs);
-  friend bool operator!=(const element& lhs, const element& rhs);
+  Element& operator=(const Element& other);
+  Element& operator=(Element&& other) noexcept;
 
-  friend std::ostream& operator<<(std::ostream& out, const element& e);
+  friend bool operator==(const Element& lhs, const Element& rhs);
+  friend bool operator!=(const Element& lhs, const Element& rhs);
+
+  friend std::ostream& operator<<(std::ostream& out, const Element& e);
 
 private:
   void add_instance();
@@ -28,19 +30,21 @@ private:
 private:
   int value;
 
-  inline static std::set<const element*> instances;
+  inline static std::set<const Element*> instances;
 };
 
-struct element::no_new_intances_guard {
-  no_new_intances_guard();
+struct Element::NoNewInstancesGuard {
+  NoNewInstancesGuard();
 
-  no_new_intances_guard(const no_new_intances_guard&) = delete;
-  no_new_intances_guard& operator=(const no_new_intances_guard&) = delete;
+  NoNewInstancesGuard(const NoNewInstancesGuard&) = delete;
+  NoNewInstancesGuard& operator=(const NoNewInstancesGuard&) = delete;
 
-  ~no_new_intances_guard() noexcept(false);
+  ~NoNewInstancesGuard() noexcept(false);
 
   bool check_no_new_instances() const noexcept;
 
 private:
-  std::set<const element*> old_instances;
+  std::set<const Element*> old_instances;
 };
+
+} // namespace ct::test

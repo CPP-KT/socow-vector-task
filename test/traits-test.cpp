@@ -7,19 +7,23 @@
 #include <ranges>
 #include <type_traits>
 
+namespace ct::test {
+
 TEST_CASE("Member types") {
-  STATIC_REQUIRE(std::is_same_v<socow_vector<element, 3>::value_type, element>);
-  STATIC_REQUIRE(std::is_same_v<socow_vector<element, 3>::reference, element&>);
-  STATIC_REQUIRE(std::is_same_v<socow_vector<element, 3>::const_reference, const element&>);
-  STATIC_REQUIRE(std::is_same_v<socow_vector<element, 3>::pointer, element*>);
-  STATIC_REQUIRE(std::is_same_v<socow_vector<element, 3>::const_pointer, const element*>);
-  STATIC_REQUIRE(std::is_same_v<socow_vector<element, 3>::iterator, element*>);
-  STATIC_REQUIRE(std::is_same_v<socow_vector<element, 3>::const_iterator, const element*>);
+  STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::ValueType, Element>);
+  STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::Reference, Element&>);
+  STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::ConstReference, const Element&>);
+  STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::Pointer, Element*>);
+  STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::ConstPointer, const Element*>);
+  STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::Iterator, Element*>);
+  STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::ConstIterator, const Element*>);
 }
 
 TEST_CASE("Vector is contiguous") {
-  STATIC_REQUIRE(std::contiguous_iterator<socow_vector<element, 3>::iterator>);
-  STATIC_REQUIRE(std::contiguous_iterator<socow_vector<element, 3>::const_iterator>);
+  STATIC_REQUIRE(std::contiguous_iterator<SocowVector<Element, 3>::Iterator>);
+  STATIC_REQUIRE(std::contiguous_iterator<SocowVector<Element, 3>::ConstIterator>);
 
-  STATIC_REQUIRE(std::ranges::contiguous_range<socow_vector<element, 3>>);
+  STATIC_REQUIRE(std::ranges::contiguous_range<SocowVector<Element, 3>>);
 }
+
+} // namespace ct::test

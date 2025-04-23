@@ -4,30 +4,32 @@
 
 #include <utility>
 
-element::element(int data)
+namespace ct::test {
+
+Element::Element(int data)
     : value(data) {
   add_instance();
 }
 
-element::element(const element& other)
+Element::Element(const Element& other)
     : value(-1) {
   other.assert_exists();
   add_instance();
   value = other.value;
 }
 
-element::element(element&& other) noexcept
+Element::Element(Element&& other) noexcept
     : value(-1) {
   other.assert_exists();
   add_instance();
   value = std::exchange(other.value, -1);
 }
 
-element::~element() {
+Element::~Element() {
   delete_instance();
 }
 
-element& element::operator=(const element& other) {
+Element& Element::operator=(const Element& other) {
   assert_exists();
   other.assert_exists();
 
@@ -35,7 +37,7 @@ element& element::operator=(const element& other) {
   return *this;
 }
 
-element& element::operator=(element&& other) noexcept {
+Element& Element::operator=(Element&& other) noexcept {
   assert_exists();
   other.assert_exists();
 
@@ -43,24 +45,24 @@ element& element::operator=(element&& other) noexcept {
   return *this;
 }
 
-bool operator==(const element& lhs, const element& rhs) {
+bool operator==(const Element& lhs, const Element& rhs) {
   lhs.assert_exists();
   rhs.assert_exists();
 
   return lhs.value == rhs.value;
 }
 
-bool operator!=(const element& lhs, const element& rhs) {
+bool operator!=(const Element& lhs, const Element& rhs) {
   return !(lhs == rhs);
 }
 
-std::ostream& operator<<(std::ostream& out, const element& e) {
+std::ostream& operator<<(std::ostream& out, const Element& e) {
   e.assert_exists();
   out << e.value;
   return out;
 }
 
-void element::add_instance() {
+void Element::add_instance() {
   auto p = instances.insert(this);
   if (!p.second) {
     // clang-format off
@@ -73,24 +75,24 @@ void element::add_instance() {
   }
 }
 
-void element::delete_instance() {
+void Element::delete_instance() {
   std::size_t erased = instances.erase(this);
   if (erased != 1) {
     FAIL("Attempt of destroying non-existing object at address " << static_cast<void*>(this));
   }
 }
 
-void element::assert_exists() const {
+void Element::assert_exists() const {
   bool exists = instances.find(this) != instances.end();
   if (!exists) {
     FAIL("Accessing a non-existing object at address " << static_cast<const void*>(this));
   }
 }
 
-element::no_new_intances_guard::no_new_intances_guard()
+Element::NoNewInstancesGuard::NoNewInstancesGuard()
     : old_instances(instances) {}
 
-element::no_new_intances_guard::~no_new_intances_guard() noexcept(false) {
+Element::NoNewInstancesGuard::~NoNewInstancesGuard() noexcept(false) {
   if (std::uncaught_exceptions() == 0) {
     bool no_new_instances = check_no_new_instances();
     instances = old_instances;
@@ -100,6 +102,8 @@ element::no_new_intances_guard::~no_new_intances_guard() noexcept(false) {
   }
 }
 
-bool element::no_new_intances_guard::check_no_new_instances() const noexcept {
+bool Element::NoNewInstancesGuard::check_no_new_instances() const noexcept {
   return old_instances == instances;
 }
+
+} // namespace ct::test

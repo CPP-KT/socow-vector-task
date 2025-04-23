@@ -5,66 +5,68 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-template class socow_vector<int, 3>;
-template class socow_vector<element, 3>;
-template class socow_vector<element, 10>;
+template class ct::SocowVector<int, 3>;
+template class ct::SocowVector<ct::test::Element, 3>;
+template class ct::SocowVector<ct::test::Element, 10>;
+
+namespace ct::test {
 
 template <typename... Ts>
-class snapshot {
+class Snapshot {
 public:
-  explicit snapshot(const Ts&... objects)
+  explicit Snapshot(const Ts&... objects)
       : snapshots(objects...) {}
 
-  snapshot(const snapshot&) = delete;
+  Snapshot(const Snapshot&) = delete;
 
   void full_verify(const Ts&... objects) const {
-    std::apply([&](const snapshot<Ts>&... snapshots) { (snapshots.full_verify(objects), ...); }, snapshots);
+    std::apply([&](const Snapshot<Ts>&... snapshots) { (snapshots.full_verify(objects), ...); }, snapshots);
   }
 
   void verify(const Ts&... objects) const {
-    std::apply([&](const snapshot<Ts>&... snapshots) { (snapshots.verify(objects), ...); }, snapshots);
+    std::apply([&](const Snapshot<Ts>&... snapshots) { (snapshots.verify(objects), ...); }, snapshots);
   }
 
 private:
-  std::tuple<snapshot<Ts>...> snapshots;
+  std::tuple<Snapshot<Ts>...> snapshots;
 };
 
 template <>
-class snapshot<element> {
+class Snapshot<Element> {
 public:
-  explicit snapshot(const element& e)
+  explicit Snapshot(const Element& e)
       : value(e) {}
 
-  snapshot(const snapshot&) = delete;
+  Snapshot(const Snapshot&) = delete;
 
-  void full_verify(const element& other) const {
+  void full_verify(const Element& other) const {
     verify(other);
   }
 
-  void verify(const element& other) const {
+  void verify(const Element& other) const {
     REQUIRE(value == other);
   }
 
-  element value;
+  Element value;
 };
 
 template <std::size_t SMALL_SIZE>
-class snapshot<socow_vector<element, SMALL_SIZE>> {
+class Snapshot<SocowVector<Element, SMALL_SIZE>> {
 public:
-  explicit snapshot(const socow_vector<element, SMALL_SIZE>& a)
+  explicit Snapshot(const SocowVector<Element, SMALL_SIZE>& a)
       : capacity(a.capacity())
       , data(a.data())
       , elements(a.begin(), a.end()) {}
 
-  snapshot(const snapshot&) = delete;
+  Snapshot(const Snapshot&) = delete;
 
-  void full_verify(const socow_vector<element, SMALL_SIZE>& other) const {
+  void full_verify(const SocowVector<Element, SMALL_SIZE>& other) const {
     REQUIRE(other.capacity() == capacity);
     REQUIRE(other.data() == data);
     verify(other);
   }
 
-  void verify(const socow_vector<element, SMALL_SIZE>& other) const {
+  void verify(const SocowVector<Element, SMALL_SIZE>& other) const {
     REQUIRE(other.size() == elements.size());
     for (std::size_t i = 0; i < elements.size(); ++i) {
       CAPTURE(i);
@@ -73,29 +75,31 @@ public:
   }
 
   std::size_t capacity;
-  const element* data;
-  std::vector<element> elements;
+  const Element* data;
+  std::vector<Element> elements;
 };
 
 template <std::size_t SMALL_SIZE>
-bool is_static_storage(const socow_vector<element, SMALL_SIZE>& a) {
+bool is_static_storage(const SocowVector<Element, SMALL_SIZE>& a) {
   if (a.capacity() != SMALL_SIZE) {
     return false;
   }
-  const element* data = a.data();
+  const Element* data = a.data();
   return std::less_equal<const void*>{}(&a, data) && std::greater<const void*>{}(&a + 1, data);
 }
 
 template <std::size_t SMALL_SIZE>
-void assert_empty_storage(const socow_vector<element, SMALL_SIZE>& a) {
+void assert_empty_storage(const SocowVector<Element, SMALL_SIZE>& a) {
   REQUIRE(a.empty());
   REQUIRE(a.size() == 0);
   REQUIRE(is_static_storage(a));
 }
 
 template <std::size_t SMALL_SIZE>
-void mass_push_back(socow_vector<element, SMALL_SIZE>& a, std::size_t size) {
+void mass_push_back(SocowVector<Element, SMALL_SIZE>& a, std::size_t size) {
   for (std::size_t i = 0; i < size; ++i) {
     a.push_back(2 * i + 1);
   }
 }
+
+} // namespace ct::test
