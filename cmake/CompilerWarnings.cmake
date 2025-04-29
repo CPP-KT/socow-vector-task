@@ -11,7 +11,7 @@ function(ct_set_compiler_warnings TARGET)
     -Wextra-semi # warn about redundant semicolons
     -Woverloaded-virtual # warn on overloading (not overriding) a virtual function
     -Wzero-as-null-pointer-constant # warn on using literal '0' as a pointer
-    -Wnull-dereference # warn if nullptr dereference is detected
+    # -Wnull-dereference # warn if nullptr dereference is detected (disabled, might be false-positive)
   )
 
   set(GCC_WARNINGS
