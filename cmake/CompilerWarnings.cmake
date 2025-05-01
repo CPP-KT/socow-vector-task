@@ -40,8 +40,8 @@ function(ct_set_compiler_warnings TARGET)
 
   if(CT_TREAT_WARNINGS_AS_ERRORS)
     message(STATUS "Warnings are treated as errors")
-    list(APPEND GCC_WARNINGS -Werror -pedantic-errors)
-    list(APPEND CLANG_WARNINGS -Werror -pedantic-errors)
+    list(APPEND GCC_WARNINGS -Werror)
+    list(APPEND CLANG_WARNINGS -Werror)
     list(APPEND MSVC_WARNINGS /WX)
   endif()
 
