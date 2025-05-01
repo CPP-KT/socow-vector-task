@@ -6,7 +6,6 @@ function(ct_set_compiler_warnings TARGET)
     -Wall -Wextra # baseline reasonable and standard warnings
     -Wno-self-move # don't warn on self-move because it's often used in tests
     -Wno-sign-compare # don't warn on different sign compare because it's often used in tests
-    -pedantic # warn on language extensions
     -Wold-style-cast # warn on use of C-style casts
     -Wextra-semi # warn about redundant semicolons
     -Woverloaded-virtual # warn on overloading (not overriding) a virtual function
@@ -37,7 +36,7 @@ function(ct_set_compiler_warnings TARGET)
     -Wno-self-assign-overloaded # don't warn on self-assign because it's often used in tests
   )
 
-  set(MSVC_WARNINGS /W4 /permissive-)
+  set(MSVC_WARNINGS /W4)
 
   if(CT_TREAT_WARNINGS_AS_ERRORS)
     message(STATUS "Warnings are treated as errors")
