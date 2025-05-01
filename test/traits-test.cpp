@@ -26,4 +26,9 @@ TEST_CASE("Vector is contiguous") {
   STATIC_REQUIRE(std::ranges::contiguous_range<SocowVector<Element, 3>>);
 }
 
+TEST_CASE("sizeof(SocowVector) is not too large") {
+  STATIC_REQUIRE(sizeof(SocowVector<void*, 10>) <= sizeof(void*) * 12);
+  STATIC_REQUIRE(sizeof(SocowVector<void*, 1>) <= sizeof(void*) * 3);
+}
+
 } // namespace ct::test
