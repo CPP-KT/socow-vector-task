@@ -55,7 +55,7 @@ class SocowVector;
 - `erase(ConstIterator pos)` &mdash; удалить элемент по итератору;
 - `erase(ConstIterator first, ConstIterator last)` &mdash; удалить все элементы в диапазоне `[first, last)`;
 - `clear()` &mdash; очистить вектор от всех элементов;
-- `reserve(size_t new_capacity)` &mdash; установить вместимость вектора, если текущая меньше;
+- `reserve(std::size_t new_capacity)` &mdash; установить вместимость вектора, если текущая меньше;
 - `shrink_to_fit()` &mdash; сжать вместимость вектора до текущего размера.
 
 ## Рекомендации по выполнению
