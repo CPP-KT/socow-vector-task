@@ -50,10 +50,10 @@ class SocowVector;
 - `data()` &mdash; указатель на начало вектора;
 - `begin()`, `end()` &mdash; итераторы;
 - `push_back(...)` &mdash; вставить элемент в конец вектора (аргументом может быть lvalue или rvalue);
-- `insert(const_iterator pos, ...)` &mdash; вставить элемент перед `pos` (аргументом может быть lvalue или rvalue);
+- `insert(ConstIterator pos, ...)` &mdash; вставить элемент перед `pos` (аргументом может быть lvalue или rvalue);
 - `pop_back()` &mdash; удалить элемент из конца вектора;
-- `erase(const_iterator pos)` &mdash; удалить элемент по итератору;
-- `erase(const_iterator first, const_iterator last)` &mdash; удалить все элементы в диапазоне `[first, last)`;
+- `erase(ConstIterator pos)` &mdash; удалить элемент по итератору;
+- `erase(ConstIterator first, ConstIterator last)` &mdash; удалить все элементы в диапазоне `[first, last)`;
 - `clear()` &mdash; очистить вектор от всех элементов;
 - `reserve(size_t new_capacity)` &mdash; установить вместимость вектора, если текущая меньше;
 - `shrink_to_fit()` &mdash; сжать вместимость вектора до текущего размера.
