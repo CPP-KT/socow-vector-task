@@ -19,7 +19,7 @@ TEST_CASE("Member types") {
   STATIC_REQUIRE(std::is_same_v<SocowVector<Element, 3>::ConstIterator, const Element*>);
 }
 
-TEST_CASE("Vector is contiguous") {
+TEST_CASE("SocowVector is contiguous") {
   STATIC_REQUIRE(std::contiguous_iterator<SocowVector<Element, 3>::Iterator>);
   STATIC_REQUIRE(std::contiguous_iterator<SocowVector<Element, 3>::ConstIterator>);
 
@@ -29,6 +29,14 @@ TEST_CASE("Vector is contiguous") {
 TEST_CASE("sizeof(SocowVector) is not too large") {
   STATIC_REQUIRE(sizeof(SocowVector<void*, 10>) <= sizeof(void*) * 12);
   STATIC_REQUIRE(sizeof(SocowVector<void*, 1>) <= sizeof(void*) * 3);
+}
+
+TEST_CASE("SocowVector is copyable and nothrow movable/swappable") {
+  STATIC_REQUIRE(std::is_copy_constructible_v<SocowVector<Element, 3>>);
+  STATIC_REQUIRE(std::is_nothrow_move_constructible_v<SocowVector<Element, 3>>);
+  STATIC_REQUIRE(std::is_copy_assignable_v<SocowVector<Element, 3>>);
+  STATIC_REQUIRE(std::is_nothrow_move_assignable_v<SocowVector<Element, 3>>);
+  STATIC_REQUIRE(std::is_nothrow_swappable_v<SocowVector<Element, 3>>);
 }
 
 } // namespace ct::test
